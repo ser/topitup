@@ -2,18 +2,36 @@
 
 import time
 
-from flask import Flask
+# Server engine
 import cherrypy
+# Framework
+from flask import Flask
 from paste.translogger import TransLogger
+# Twitter Bootstrap
+from flask_bootstrap import Bootstrap
+# Flask Appconfig
+from flask_appconfig import AppConfig
 
-app = Flask(__name__)
+# Build pages from skeleton
+from frontend import frontend
+from nav import nav
+
+app = Flask('topitup')
 app.debug = True
 
+# Install Flask-Appconfig extension
+AppConfig(app)
 
-@app.route("/")
-def hello():
-    return "Hello World!"
+# Install Bootstrap extension
+Bootstrap(app)
 
+# Our application uses blueprints as well; these go well with the
+# application factory. We already imported the blueprint, now we just need
+# to register it:
+app.register_blueprint(frontend)
+
+# Initializing the navigation
+nav.init_app(app)
 
 class FotsTransLogger(TransLogger):
     # Borrowed from:
