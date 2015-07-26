@@ -26,7 +26,9 @@ from nav import nav
 app = Flask('topitup')
 
 # Comment all of this for production!!!!!!!!!!!!!!!!!!!!!!
+from flask_debug import Debug
 app.debug = True
+Debug(app)
 # for developement, always pass captcha
 app.testing = True
 
@@ -45,6 +47,8 @@ from flask import request
 @babel.localeselector
 def get_locale():
     return request.accept_languages.best_match(['en', 'pl'])
+
+# Structure of User data located in phpBB
 
 # if app.debug = True, show a toolbar, please
 DebugToolbarExtension(app)
