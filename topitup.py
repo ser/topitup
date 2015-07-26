@@ -6,11 +6,20 @@ import time
 import cherrypy
 # Framework
 from flask import Flask
+# Tune our log file
 from paste.translogger import TransLogger
 # Twitter Bootstrap
 from flask_bootstrap import Bootstrap
 # Flask Appconfig
 from flask_appconfig import AppConfig
+# i18n support 
+from flask_babel import Babel
+# Debug Toolbar
+from flask_debugtoolbar import DebugToolbarExtension
+# SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
+# WTForms
+from flask_wtf import Form
 
 # Build pages from skeleton
 from frontend import frontend
@@ -22,8 +31,21 @@ app.debug = True
 # Install Flask-Appconfig extension
 AppConfig(app)
 
+# Install and connect SQLAlchemy
+db = SQLAlchemy(app)
+
 # Install Bootstrap extension
 Bootstrap(app)
+
+# Install Babel extension and set the locale from the browser
+babel = Babel(app)
+from flask import request
+@babel.localeselector
+def get_locale():
+    return request.accept_languages.best_match(['en', 'pl'])
+
+# if app.debug = True, show a toolbar, please
+DebugToolbarExtension(app)
 
 # Our application uses blueprints as well; these go well with the
 # application factory. We already imported the blueprint, now we just need
@@ -44,13 +66,13 @@ class FotsTransLogger(TransLogger):
 
         [08/Jan/2013:23:50:03] ENGINE Serving on 0.0.0.0:5000
         [08/Jan/2013:23:50:03] ENGINE Bus STARTED
-        [08/Jan/2013:23:50:45 +1100] REQUES GET 200 / (192.168.172.1) 830
+        [08/Jan/2013:23:50:45 +1100] REQUEST GET 200 / (192.168.172.1) 830
 
         becomes
 
         [08/Jan/2013:23:50:03] ENGINE Serving on 0.0.0.0:5000
         [08/Jan/2013:23:50:03] ENGINE Bus STARTED
-        [08/Jan/2013:23:50:45] REQUES GET 200 / (192.168.172.1) 830
+        [08/Jan/2013:23:50:45] REQUEST GET 200 / (192.168.172.1) 830
         """
 
         if bytes is None:
@@ -79,8 +101,8 @@ class FotsTransLogger(TransLogger):
 def run_server():
     # Enable custom Paste access logging
     log_format = (
-        '[%(time)s] REQUES %(REQUEST_METHOD)s %(status)s %(REQUEST_URI)s '
-        '(%(REMOTE_ADDR)s) %(bytes)s'
+        '[%(time)s] REQUEST %(REQUEST_METHOD)s %(status)s %(REQUEST_URI)s '
+        '(%(REMOTE_ADDR)s) %(bytes)s %(HTTP_USER_AGENT)s'
     )
     app_logged = FotsTransLogger(app, format=log_format)
 
