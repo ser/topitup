@@ -1,0 +1,3 @@
+#!/bin/bash
+export TOPITUP_CONFIG=topitup.conf
+python topitup.py
