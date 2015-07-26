@@ -5,7 +5,12 @@
 # You can find out more about blueprints at
 # http://flask.pocoo.org/docs/blueprints/
 
-from flask import Blueprint, render_template
+# WTForms
+from flask_wtf import Form, RecaptchaField
+from wtforms import StringField, SubmitField, PasswordField
+from wtforms.validators import DataRequired
+
+from flask import Blueprint, render_template, abort, redirect, url_for, session
 from flask_nav.elements import Navbar, View, Subgroup, Link, Text, Separator
 
 from nav import nav
@@ -18,7 +23,7 @@ frontend = Blueprint('frontend', __name__)
 nav.register_element('frontend_top', Navbar(
     View('Flask-Bootstrap', '.index'),
     View('Home', '.index'),
-    View('Debug-Info', 'debug.debug_root'),
+#    View('Debug-Info', 'debug.debug_root'),
     Subgroup(
         'Docs',
         Link('Flask-Bootstrap', 'http://pythonhosted.org/Flask-Bootstrap'),
@@ -34,9 +39,26 @@ nav.register_element('frontend_top', Navbar(
     )
 ))
 
+# Login Form
+class LoginForm(Form):
+    alias = StringField('alias', validators=[DataRequired()])
+    password = PasswordField('password', validators=[DataRequired()])
+    recaptcha = RecaptchaField('Spam protection')
+    submit = SubmitField("Login")
+
 
 # Our index-page just shows a quick explanation. Check out the template
 # "templates/index.html" documentation for more details.
 @frontend.route('/')
 def index():
     return render_template('index.html')
+
+@frontend.route('/login', methods=('GET', 'POST'))
+def login():
+
+    form = LoginForm()
+    if form.validate_on_submit():
+        return redirect('/siema')
+
+    return render_template('login.html', form=form)
+

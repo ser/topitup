@@ -18,15 +18,17 @@ from flask_babel import Babel
 from flask_debugtoolbar import DebugToolbarExtension
 # SQLAlchemy
 from flask_sqlalchemy import SQLAlchemy
-# WTForms
-from flask_wtf import Form
 
 # Build pages from skeleton
 from frontend import frontend
 from nav import nav
 
 app = Flask('topitup')
+
+# Comment all of this for production!!!!!!!!!!!!!!!!!!!!!!
 app.debug = True
+# for developement, always pass captcha
+app.testing = True
 
 # Install Flask-Appconfig extension
 AppConfig(app)
