@@ -71,9 +71,10 @@ def index():
 
     if registered_user is None:
         flash('Username or Password is invalid', 'error')
-        return redirect(url_for('login'))
+        return redirect('/login')
+
     login_user(registered_user)
     flash('Logged in successfully')
 
-    return redirect(request.args.get('next') or url_for('index'))
+    return redirect('/')
 
