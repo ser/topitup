@@ -18,6 +18,8 @@ from flask_babel import Babel
 from flask_debugtoolbar import DebugToolbarExtension
 # SQLAlchemy
 from flask_sqlalchemy import SQLAlchemy
+# Login manager
+from flask_login import LoginManager
 
 # Build pages from skeleton
 from frontend import frontend
@@ -37,6 +39,15 @@ AppConfig(app)
 
 # Install and connect SQLAlchemy
 db = SQLAlchemy(app)
+
+# Install Login manager
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 # Install Bootstrap extension
 Bootstrap(app)
