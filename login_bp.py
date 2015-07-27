@@ -9,6 +9,9 @@
 from flask import Blueprint, render_template, abort, redirect, url_for, session, request, flash, current_app, g
 from flask_nav.elements import Navbar, View, Subgroup, Link, Text, Separator
 
+# Import password / encryption helper tools
+from werkzeug import check_password_hash, generate_password_hash
+
 # FLask Login
 from flask_login import login_user, logout_user, current_user, login_required
 
@@ -67,14 +70,14 @@ def index():
 
     username = request.form['username']
     password = request.form['password']
-    registered_user = User.query.filter_by(username=username,password=password).first()
 
-    if registered_user is None:
-        flash('Username or Password is invalid', 'error')
-        return redirect('/login')
-
-    login_user(registered_user)
-    flash('Logged in successfully')
-
-    return redirect('/')
+#    registered_user = User.query.filter_by(username=username,password=password).first()
+    registered_user = User.query.filter_by(username=username).first()
+    if registered_user and check_password_hash(registered_user.password, password):
+        login_user(registered_user)
+        #session['user_id'] = user.id
+        flash('Logged in successfully')
+        return redirect('/')
+    flash('Username or Password is invalid', 'error')
+    return redirect('/login')
 
