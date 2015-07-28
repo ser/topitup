@@ -44,11 +44,12 @@ nav.register_element('frontend_top', Navbar(
 
 @frontend.before_request
 def before_request():
-    g.user = current_user.username.decode('utf-8')
-    g.email= current_user.email.decode('utf-8')
+    try:
+        g.user = current_user.username.decode('utf-8')
+        g.email= current_user.email.decode('utf-8')
+    except: pass
 
 # Front page
 @frontend.route('/')
 def index():
     return render_template('index.html')
-

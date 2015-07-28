@@ -90,3 +90,8 @@ def index():
             return redirect('/login')
 
     return render_template('login.html', form=form)
+
+@login_bp.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('frontend.index'))
