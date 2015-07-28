@@ -19,13 +19,13 @@ frontend = Blueprint('frontend', __name__)
 # We're adding a navbar as well through flask-navbar. In our example, the
 # navbar has an usual amount of Link-Elements, more commonly you will have a
 # lot more View instances.
-nav.register_element('frontend_top', Navbar(
-    View('TopItUp', '.index'),
+#nav.register_element('frontend_top', Navbar(
+#    View('TopItUp', '.index'),
 #    Subgroup(
 #        Text(topitup_user),
 #        Text('Bootstrap'),
 #    ),
-    View('Home', '.index'),
+#    View('Home', '.index'),
 #    View('Debug-Info', 'debug.debug_root'),
 #    Subgroup(
 #        'Docs',
@@ -40,16 +40,35 @@ nav.register_element('frontend_top', Navbar(
 #        Link('Javascript', 'http://getbootstrap.com/javascript/'),
 #        Link('Customize', 'http://getbootstrap.com/customize/'),
 #    )
-))
+#))
+
+alicja = 7
+atopa = (View('TopItUp', '.index'), 
+        View('Home', '.index'),)
+
+topbar = Navbar(
+        View('TopItUp', '.index'),
+        View('Home', '.index'),
+    )
 
 @frontend.before_request
 def before_request():
     try:
         g.user = current_user.username.decode('utf-8')
-        g.email= current_user.email.decode('utf-8')
+        g.email = current_user.email.decode('utf-8')
     except: pass
 
 # Front page
 @frontend.route('/')
 def index():
+    addonsbar = Navbar( 
+        Text('Ala'),
+    )
+
+#    topbar = topbar
+#    topbar = topbar + addonsbar
+    print(dir(atopa))
+    print(dir(atopa.index))
+
+    nav.register_element('frontend_top', topbar) 
     return render_template('index.html')

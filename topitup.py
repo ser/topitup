@@ -20,6 +20,9 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_sqlalchemy import SQLAlchemy
 # Login manager
 from flask_login import LoginManager
+# Flask KVSession
+from flask_kvsession import KVSessionExtension
+from simplekv.fs import FilesystemStore
 
 app = Flask('topitup')
 
@@ -48,6 +51,10 @@ def load_user(id):
 
 # Install Bootstrap extension
 Bootstrap(app)
+
+# Install KVSession
+store = FilesystemStore('./data')
+KVSessionExtension(store, app)
 
 # Install Babel extension and set the locale from the browser
 babel = Babel(app)
