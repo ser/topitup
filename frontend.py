@@ -8,6 +8,7 @@
 # Flask modules
 from flask import Blueprint, render_template, abort, redirect, url_for, session, request, flash, current_app, g
 from flask_nav.elements import Navbar, View, Subgroup, Link, Text, Separator
+from flask_login import current_user
 
 # Let's start!
 
@@ -20,8 +21,12 @@ frontend = Blueprint('frontend', __name__)
 # lot more View instances.
 nav.register_element('frontend_top', Navbar(
     View('Flask-Bootstrap', '.index'),
+#    Subgroup(
+#        Text(topitup_user),
+#        Text('Bootstrap'),
+#    ),
     View('Home', '.index'),
-#    View('Debug-Info', 'debug.debug_root'),
+    View('Debug-Info', 'debug.debug_root'),
     Subgroup(
         'Docs',
         Link('Flask-Bootstrap', 'http://pythonhosted.org/Flask-Bootstrap'),
@@ -37,8 +42,13 @@ nav.register_element('frontend_top', Navbar(
     )
 ))
 
-# Our index-page just shows a quick explanation. Check out the template
-# "templates/index.html" documentation for more details.
+@frontend.before_request
+def before_request():
+    g.user = current_user.username.decode('utf-8')
+    g.email= current_user.email.decode('utf-8')
+
+# Front page
 @frontend.route('/')
 def index():
     return render_template('index.html')
+

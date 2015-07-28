@@ -2,18 +2,22 @@
    more information about template inheritance. #}
 {%- extends "base.html" %}
 
-
 {# Inside the ``content`` is where you should place most of your own stuff.
    This will keep scripts at the page end and a navbar you add on later
    intact. #}
 {% block content %}
-{{util.flashed_messages(dismissible=True)}}
    <div class="container">
       <div class="jumbotron">
         <h1>{% trans %}Welcome to TopItUp{% endtrans%}</h1>
         <p>
+            {{util.flashed_messages(dismissible=True)}}
+        </p>
+        {% if not current_user.is_authenticated() %}
+        <p>
           <a class="btn btn-lg btn-default" role="button"
              href="/login" >{% trans %}Login{% endtrans%}</a>
         </p>
+         {% else %}
+        {% endif %}
       </div>
 {%- endblock %}

@@ -24,9 +24,9 @@ from flask_login import LoginManager
 app = Flask('topitup')
 
 # Comment all of this for production!!!!!!!!!!!!!!!!!!!!!!
-#from flask_debug import Debug
-#app.debug = True
-#Debug(app)
+from flask_debug import Debug
+app.debug = True
+Debug(app)
 # for developement, always pass captcha
 app.testing = True
 

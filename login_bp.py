@@ -30,14 +30,18 @@ from topitup import db
 class User(db.Model):
     __tablename__ = "phpbb_users"
     id = db.Column('user_id', db.Integer, primary_key=True)
-    username = db.Column('username_alias', db.String(63), unique=True , index=True)
+    username = db.Column('username_alias', db.String(63), unique=True, index=True)
     password = db.Column('user_password' , db.String(255))
     email = db.Column('user_email', db.String(100), unique=True, index=True)
+    posts = db.Column('user_posts', db.Integer)
+    avatar = db.Column('user_avatar', db.String(255))
 
-    def __init__(self, username, password, email):
+    def __init__(self, username, password, email, posts, avatar):
         self.username = username
         self.password = password
         self.email = email
+        self.posts = posts
+        self.avatar = avatar
 
     def is_authenticated(self):
         return True
@@ -49,7 +53,6 @@ class User(db.Model):
         return False
 
     def get_id(self):
-        #return unicode(self.id)
         return self.id
 
     def __repr__(self):
@@ -57,10 +60,10 @@ class User(db.Model):
 
 # Login Form
 class LoginForm(Form):
-    username = StringField('username', validators=[DataRequired()])
-    password = PasswordField('password', validators=[DataRequired()])
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
     recaptcha = RecaptchaField('Spam protection')
-    submit = SubmitField("Login")
+    submit = SubmitField("Log me in")
 
 @login_bp.route('/login', methods=('GET', 'POST'))
 def index():
@@ -87,4 +90,3 @@ def index():
             return redirect('/login')
 
     return render_template('login.html', form=form)
-

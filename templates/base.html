@@ -43,4 +43,6 @@
 {# Finally, round things out with navigation #}
 {% block navbar %}
 {{nav.frontend_top.render()}}
+{{ g.user }}
+{{ g.email }}
 {% endblock %}
