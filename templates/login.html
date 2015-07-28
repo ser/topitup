@@ -8,6 +8,7 @@
    This will keep scripts at the page end and a navbar you add on later
    intact. #}
 {% block content %}
+{{util.flashed_messages(dismissible=True)}}
    <div class="container">
       <div class="jumbotron">
         <h1>{% trans %}Login to TopItUp{% endtrans%}</h1>

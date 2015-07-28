@@ -71,19 +71,20 @@ def index():
         password = request.form['password']
         password = password.encode('utf-8') # required by bcrypt
 
-        sql_user_query = User.query.filter_by(username=username).first()
-        print(sql_user_query)
+        try:
+            sql_user_query = User.query.filter_by(username=username).first()
 
-        pwhash = sql_user_query.password.decode('utf-8')
-        pwhash = pwhash.encode('utf-8') # required by bcrypt
-        userid = sql_user_query.id
+            pwhash = sql_user_query.password.decode('utf-8')
+            pwhash = pwhash.encode('utf-8') # required by bcrypt
+            userid = sql_user_query.id
 
-        if username and bcrypt.hashpw(password, pwhash) == pwhash:
-            login_user(sql_user_query)
-            flash('Logged in successfully')
-            return redirect('/')
+            if userid and bcrypt.hashpw(password, pwhash) == pwhash:
+                login_user(sql_user_query)
+                flash('Logged in successfully', 'info')
+                return redirect('/')
+        except:
+            flash('Username or Password is invalid', 'error')
+            return redirect('/login')
 
-        flash('Username or Password is invalid', 'error')
-        return redirect('/login')
     return render_template('login.html', form=form)
 

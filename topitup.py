@@ -21,16 +21,12 @@ from flask_sqlalchemy import SQLAlchemy
 # Login manager
 from flask_login import LoginManager
 
-# Build pages from skeleton
-from frontend import frontend
-from nav import nav
-
 app = Flask('topitup')
 
 # Comment all of this for production!!!!!!!!!!!!!!!!!!!!!!
-from flask_debug import Debug
-app.debug = True
-Debug(app)
+#from flask_debug import Debug
+#app.debug = True
+#Debug(app)
 # for developement, always pass captcha
 app.testing = True
 
@@ -45,6 +41,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+from login_bp import User
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -59,15 +56,17 @@ from flask import request
 def get_locale():
     return request.accept_languages.best_match(['en', 'pl'])
 
-# Structure of User data located in phpBB
-
 # if app.debug = True, show a toolbar, please
 DebugToolbarExtension(app)
 
-# Our application uses blueprints as well; these go well with the
-# application factory. We already imported the blueprint, now we just need
-# to register it:
+# Build pages from skeleton
+from frontend import frontend
+from nav import nav
+from login_bp import login_bp
+
+# Register bluprints
 app.register_blueprint(frontend)
+app.register_blueprint(login_bp)
 
 # Initializing the navigation
 nav.init_app(app)
