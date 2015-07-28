@@ -20,26 +20,26 @@ frontend = Blueprint('frontend', __name__)
 # navbar has an usual amount of Link-Elements, more commonly you will have a
 # lot more View instances.
 nav.register_element('frontend_top', Navbar(
-    View('Flask-Bootstrap', '.index'),
+    View('TopItUp', '.index'),
 #    Subgroup(
 #        Text(topitup_user),
 #        Text('Bootstrap'),
 #    ),
     View('Home', '.index'),
-    View('Debug-Info', 'debug.debug_root'),
-    Subgroup(
-        'Docs',
-        Link('Flask-Bootstrap', 'http://pythonhosted.org/Flask-Bootstrap'),
-        Link('Flask-AppConfig', 'https://github.com/mbr/flask-appconfig'),
-        Link('Flask-Debug', 'https://github.com/mbr/flask-debug'),
-        Separator(),
-        Text('Bootstrap'),
-        Link('Getting started', 'http://getbootstrap.com/getting-started/'),
-        Link('CSS', 'http://getbootstrap.com/css/'),
-        Link('Components', 'http://getbootstrap.com/components/'),
-        Link('Javascript', 'http://getbootstrap.com/javascript/'),
-        Link('Customize', 'http://getbootstrap.com/customize/'),
-    )
+#    View('Debug-Info', 'debug.debug_root'),
+#    Subgroup(
+#        'Docs',
+#        Link('Flask-Bootstrap', 'http://pythonhosted.org/Flask-Bootstrap'),
+#        Link('Flask-AppConfig', 'https://github.com/mbr/flask-appconfig'),
+#        Link('Flask-Debug', 'https://github.com/mbr/flask-debug'),
+#        Separator(),
+#        Text('Bootstrap'),
+#        Link('Getting started', 'http://getbootstrap.com/getting-started/'),
+#        Link('CSS', 'http://getbootstrap.com/css/'),
+#        Link('Components', 'http://getbootstrap.com/components/'),
+#        Link('Javascript', 'http://getbootstrap.com/javascript/'),
+#        Link('Customize', 'http://getbootstrap.com/customize/'),
+#    )
 ))
 
 @frontend.before_request

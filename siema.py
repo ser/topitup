@@ -39,6 +39,7 @@ def index():
 
         if confirm_me == False:
             pass
+    # amount of Credits in user's account
     g.neuro = current_user.neuro
 
     return render_template('siema.html', form=form)
