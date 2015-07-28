@@ -13,6 +13,9 @@
         <p>
             {% trans %}Here you can purchase credits which will top your phpbb account.{% endtrans%}
         </p>
+        <p>
+            Currently you have <b>{{ g.neuro }}</b> Credits.
+        </p>
       </div>
       {{ wtf.quick_form(form) }}
 {%- endblock %}

@@ -13,6 +13,8 @@ from flask_wtf import Form, RecaptchaField
 from wtforms import SubmitField, BooleanField, DecimalField
 from wtforms.validators import DataRequired
 
+from topitup import db
+from login_bp import User
 # Let's start!
 
 siema = Blueprint('siema', __name__)
@@ -37,5 +39,6 @@ def index():
 
         if confirm_me == False:
             pass
+    g.neuro = current_user.neuro
 
     return render_template('siema.html', form=form)

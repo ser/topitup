@@ -35,13 +35,15 @@ class User(db.Model):
     email = db.Column('user_email', db.String(100), unique=True, index=True)
     posts = db.Column('user_posts', db.Integer)
     avatar = db.Column('user_avatar', db.String(255))
+    neuro = db.Column('neuro', db.Numeric(12,2))
 
-    def __init__(self, username, password, email, posts, avatar):
+    def __init__(self, username, password, email, posts, avatar, neuro):
         self.username = username
         self.password = password
         self.email = email
         self.posts = posts
         self.avatar = avatar
+        self.neuro = neuro
 
     def is_authenticated(self):
         return True
