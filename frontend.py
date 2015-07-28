@@ -42,15 +42,6 @@ frontend = Blueprint('frontend', __name__)
 #    )
 #))
 
-alicja = 7
-atopa = (View('TopItUp', '.index'), 
-        View('Home', '.index'),)
-
-topbar = Navbar(
-        View('TopItUp', '.index'),
-        View('Home', '.index'),
-    )
-
 @frontend.before_request
 def before_request():
     try:
@@ -61,14 +52,11 @@ def before_request():
 # Front page
 @frontend.route('/')
 def index():
-    addonsbar = Navbar( 
-        Text('Ala'),
+
+    # NAVBAR
+    topbar = Navbar(
+        View('TopItUp', '.index'),
+        View('Home', '.index'),
     )
-
-#    topbar = topbar
-#    topbar = topbar + addonsbar
-    print(dir(atopa))
-    print(dir(atopa.index))
-
     nav.register_element('frontend_top', topbar) 
     return render_template('index.html')
