@@ -18,7 +18,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 
 # WTForms
 from flask_wtf import Form, RecaptchaField
-from wtforms import StringField, SubmitField, PasswordField
+from wtforms import StringField, SubmitField, PasswordField, BooleanField
 from wtforms.validators import DataRequired
 
 # Let's start!
@@ -62,6 +62,7 @@ class User(db.Model):
 class LoginForm(Form):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('Remember me')
     recaptcha = RecaptchaField('Spam protection')
     submit = SubmitField("Log me in")
 
@@ -74,6 +75,10 @@ def index():
         password = request.form['password']
         password = password.encode('utf-8') # required by bcrypt
 
+        remember_me = False
+        if 'remember_me' in request.form:
+            remember_me = True
+
         try:
             sql_user_query = User.query.filter_by(username=username).first()
 
@@ -82,7 +87,7 @@ def index():
             userid = sql_user_query.id
 
             if userid and bcrypt.hashpw(password, pwhash) == pwhash:
-                login_user(sql_user_query)
+                login_user(sql_user_query, remember = remember_me)
                 flash('Logged in successfully', 'info')
                 return redirect('/')
         except:
