@@ -63,10 +63,12 @@ DebugToolbarExtension(app)
 from frontend import frontend
 from nav import nav
 from login_bp import login_bp
+from siema import siema
 
 # Register bluprints
 app.register_blueprint(frontend)
 app.register_blueprint(login_bp)
+app.register_blueprint(siema)
 
 # Initializing the navigation
 nav.init_app(app)
