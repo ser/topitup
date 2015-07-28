@@ -10,7 +10,8 @@ from flask import Blueprint, render_template, abort, redirect, url_for, session,
 from flask_nav.elements import Navbar, View, Subgroup, Link, Text, Separator
 
 # Import password / encryption helper tools
-from werkzeug import check_password_hash, generate_password_hash
+# AVOID flask-bcrypt extension, it does not work with python 3.x
+import bcrypt
 
 # FLask Login
 from flask_login import login_user, logout_user, current_user, login_required
@@ -48,7 +49,8 @@ class User(db.Model):
         return False
 
     def get_id(self):
-        return unicode(self.id)
+        #return unicode(self.id)
+        return self.id
 
     def __repr__(self):
         return '<User %r>' % (self.username)
@@ -61,23 +63,27 @@ class LoginForm(Form):
     submit = SubmitField("Login")
 
 @login_bp.route('/login', methods=('GET', 'POST'))
-#def login():
 def index():
-    if request.method == 'GET':
-        form = LoginForm()
-#       if form.validate_on_submit():
-        return render_template('login.html', form=form)
+    form = LoginForm()
+    if form.validate_on_submit():
 
-    username = request.form['username']
-    password = request.form['password']
+        username = request.form['username']
+        password = request.form['password']
+        password = password.encode('utf-8') # required by bcrypt
 
-#    registered_user = User.query.filter_by(username=username,password=password).first()
-    registered_user = User.query.filter_by(username=username).first()
-    if registered_user and check_password_hash(registered_user.password, password):
-        login_user(registered_user)
-        #session['user_id'] = user.id
-        flash('Logged in successfully')
-        return redirect('/')
-    flash('Username or Password is invalid', 'error')
-    return redirect('/login')
+        sql_user_query = User.query.filter_by(username=username).first()
+        print(sql_user_query)
+
+        pwhash = sql_user_query.password.decode('utf-8')
+        pwhash = pwhash.encode('utf-8') # required by bcrypt
+        userid = sql_user_query.id
+
+        if username and bcrypt.hashpw(password, pwhash) == pwhash:
+            login_user(sql_user_query)
+            flash('Logged in successfully')
+            return redirect('/')
+
+        flash('Username or Password is invalid', 'error')
+        return redirect('/login')
+    return render_template('login.html', form=form)
 
