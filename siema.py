@@ -127,6 +127,7 @@ def new():
             'credits': amount,
             'btc': pypayd_response['result']['amount'],
             'address': pypayd_response['result']['receiving_address'],
+            'image': pypayd_response['result']['qr_image'],
         }
 
         # and finally show an invoice to the customer
