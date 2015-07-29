@@ -56,7 +56,7 @@ class LoginForm(Form):
 
 @siema.route('/invoice/new', methods=('GET', 'POST'))
 @login_required
-def index():
+def new():
     form = LoginForm()
     if form.validate_on_submit():
 
@@ -72,3 +72,8 @@ def index():
     g.neuro = current_user.neuro
 
     return render_template('invoice-new.html', form=form)
+
+@siema.route('/invoice', methods=('GET', 'POST'))
+@login_required
+def index():
+    return render_template('invoices.html')

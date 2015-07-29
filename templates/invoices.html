@@ -1,0 +1,16 @@
+{%- extends "base.html" %}
+{% from "bootstrap/pagination.html" import render_pagination %}
+
+{% block content %}
+   <div class="container">
+      <div class="jumbotron">
+        <h1>{% trans %}Invoices{% endtrans%}</h1>
+        <p>
+            {{util.flashed_messages(dismissible=False)}}
+        </p>
+        <p>
+            {% trans %}Your invoices.{% endtrans%}
+        </p>
+      </div>
+      {{render_pagination(query_results)}}
+{%- endblock %}
