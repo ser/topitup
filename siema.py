@@ -1,6 +1,3 @@
-# You can find out more about blueprints at
-# http://flask.pocoo.org/docs/blueprints/
-
 # Flask modules
 from flask import Blueprint, render_template, abort, redirect, url_for, session, request, flash, current_app, g
 from flask_nav.elements import Navbar, View, Subgroup, Link, Text, Separator
@@ -15,7 +12,19 @@ from wtforms.validators import DataRequired
 
 from topitup import db
 from login_bp import User
+
 # Let's start!
+
+class Payd(db.Model):
+    __bind_key__ = "topitup"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    time_creation = db.Column(db.Integer)
+    time_payment = db.Column(db.Integer)
+    order_id =  db.Column(db.String(28), unique=True)
+    native_price =  db.Column(db.Integer)
+    native_currency =  db.Column(db.String(3))
+    btc_price = db.Column(db.Integer)
 
 siema = Blueprint('siema', __name__)
 
