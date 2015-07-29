@@ -10,7 +10,15 @@ from flask_wtf import Form, RecaptchaField
 from wtforms import SubmitField, BooleanField, DecimalField
 from wtforms.validators import DataRequired
 
+# Modules required for communication with pypayd
+import requests, json
+
+# Other modules
+from datetime import datetime
+
+# Our own modules
 from topitup import db
+from topitup import app
 from login_bp import User
 
 # Let's start!
@@ -60,6 +68,8 @@ def before_request():
         g.user = current_user.username.decode('utf-8')
         g.email = current_user.email.decode('utf-8')
         g.user_id = current_user.id
+        # amount of Credits in user's account
+        g.neuro = current_user.neuro
     except: pass
 
 @siema.route('/invoice/new', methods=('GET', 'POST'))
@@ -76,8 +86,24 @@ def new():
 
         if confirm_me == False:
             pass
-    # amount of Credits in user's account
-    g.neuro = current_user.neuro
+
+        # get a new transaction id 
+        sql_query = Payd.query.all()
+        new_local_transaction_id = len(sql_query)
+
+        # initiate conversation with pypayd
+        pypayd_headers = {'content-type': 'application/json'}
+        pypayd_payload = {
+            "method": "create_order",
+            "params": {"amount": amount, "qr_code": True},
+            "jsonrpc": "2.0",
+            "id": new_local_transaction_id,
+        }
+        pypayd_response = requests.post(app.config['PYPAYD_URI'],
+            data=json.dumps(pypayd_payload),
+            headers=pypayd_headers).json()
+
+        print(pypayd_response)
 
     return render_template('invoice-new.html', form=form)
 
