@@ -4,7 +4,7 @@
 {% block content %}
    <div class="container">
       <div class="jumbotron">
-        <h1>{% trans %}Invoices{% endtrans%}</h1>
+          <h1>{% trans %}Invoices{% endtrans%}</h1>
         <p>
             {{util.flashed_messages(dismissible=False)}}
         </p>
@@ -27,15 +27,19 @@
 
       {%- for invoice in invoices.items  %}
 
-      <tr>
-          <td>{{ invoice.id }}</td>
-          <td>{{ invoice.user_id }}</td>
-          <td>{{ invoice.order_id }}</td>
-          <td>{{ invoice.time_creation }}</td>
-          <td>{{ invoice.time_payment }}</td>
-          <td>{{ invoice.address }}</td>
-          <td>{{ invoice.native_price }}</td>
-          <td>{{ invoice.btc_price }}</td>
+        <tr>
+            <td>{{ invoice.id }}</td>
+            <td>{{ invoice.user_id }}</td>
+            <td>{{ invoice.order_id }}</td>
+            <td>{{ invoice.time_creation.strftime('%c') }}</td>
+            <td>{% if invoice.time_payment.strftime('%Y-%m-%d') == "1970-01-01" %}
+              {% trans %}Not paid{% endtrans%}
+              {% else %}
+              {{ invoice.time_payment.strftime('%c') }}</td>
+              {% endif %}
+              <td><a href="https://test-insight.bitpay.com/address/{{invoice.address}}"><kbd>{{ invoice.address }}</kbd></a></td>
+            <td>{{ invoice.native_price }}</td>
+            <td>{{ invoice.btc_price }}</td>
       </tr>
 
       {%- endfor %}

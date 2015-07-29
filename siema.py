@@ -21,6 +21,7 @@ from topitup import db
 from topitup import app
 from login_bp import User
 
+
 # Let's start!
 
 class Payd(db.Model):

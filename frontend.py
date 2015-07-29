@@ -49,16 +49,22 @@ def before_request():
         g.email = current_user.email.decode('utf-8')
     except: pass
 
-# Front page
-@frontend.route('/')
-def index():
-
-    # NAVBAR
-    topbar = Navbar(
+# NAVBAR
+#@nav.navigation
+def top_nav():
+    return Navbar(
         View('TopItUp', '.index'),
         View('Home', '.index'),
         View('Invoices', 'siema.index'),
         View('New invoice', 'siema.new'),
+        Subgroup(
+            'Ala',
+        )
     )
-    nav.register_element('frontend_top', topbar) 
+nav.register_element('top_nav', top_nav)
+
+# Front page
+@frontend.route('/')
+def index():
+#    nav.register_element('frontend_top', topbar) 
     return render_template('index.html')
