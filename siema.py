@@ -20,7 +20,7 @@ class Payd(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer)
     time_creation = db.Column(db.DateTime)
-    time_payment = db.Column(db.DayTime)
+    time_payment = db.Column(db.DateTime)
     order_id =  db.Column(db.String(28), unique=True)
     native_price =  db.Column(db.Integer)
     native_currency =  db.Column(db.String(3))
@@ -38,6 +38,12 @@ class Payd(db.Model):
 
     def __repr__(self):
         return '<Payd %r>' % self.id
+
+# create sqlite database if it does not exist
+try:
+    db.create_all(bind='topitup')
+except:
+    pass
 
 siema = Blueprint('siema', __name__)
 
