@@ -57,7 +57,8 @@ def index():
     topbar = Navbar(
         View('TopItUp', '.index'),
         View('Home', '.index'),
-        View('New invoice', 'siema.new')
+        View('Invoices', 'siema.index'),
+        View('New invoice', 'siema.new'),
     )
     nav.register_element('frontend_top', topbar) 
     return render_template('index.html')

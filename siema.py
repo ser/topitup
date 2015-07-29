@@ -72,7 +72,7 @@ def before_request():
         g.neuro = current_user.neuro
     except: pass
 
-@siema.route('/invoice/new', methods=('GET', 'POST'))
+@siema.route('/invoices/new', methods=('GET', 'POST'))
 @login_required
 def new():
     form = LoginForm()
@@ -90,6 +90,7 @@ def new():
         # get a new transaction id 
         sql_query = Payd.query.all()
         new_local_transaction_id = len(sql_query)
+        # TODO: deal with an unlikely event of concurrency
 
         # initiate conversation with pypayd
         pypayd_headers = {'content-type': 'application/json'}
@@ -105,13 +106,34 @@ def new():
 
         print(pypayd_response)
 
+        # insert stuff into our transaction database
+        to_db = Payd(
+            None,
+            g.user_id,
+            datetime.utcnow(),
+            datetime.fromtimestamp(0), # this is not a paid invoice, yet
+            pypayd_response['result']['order_id'],
+            amount,
+            "EUR",
+            pypayd_response['result']['amount'],
+        )
+        db.session.add(to_db)
+        db.session.commit()
+
+        # and finally show an invoice to the customer
+        #return render_template('invoice-payme.html')
+
     return render_template('invoice-new.html', form=form)
 
-@siema.route('/invoice', methods=('GET', 'POST'))
+#@siema.route('/invoices/', methods=('GET', 'POST'))
+@siema.route('/invoices/', defaults={'page': 1})
+@siema.route('/invoices/page/<int:page>')
 @login_required
-def index():
+def index(page):
     # downloading all records related to user
-    sql_query = Payd.query.filter_by(id=g.user_id).paginate(1)
-    print(sql_query)
+    #sql_query = Payd.query.filter_by(id=g.user_id).paginate(1)
+    sql_query = Payd.query.paginate(page)
 
-    return render_template('invoices.html', query_results=sql_query)
+    return render_template('invoices.html', 
+                           invoices=sql_query,
+                           )

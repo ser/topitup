@@ -12,5 +12,8 @@
             {% trans %}Your invoices.{% endtrans%}
         </p>
       </div>
-      {{render_pagination(query_results)}}
+
+      {{ invoices.items }}
+
+      {{render_pagination(invoices)}}
 {%- endblock %}
