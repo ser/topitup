@@ -13,7 +13,11 @@
         </p>
       </div>
 
-      {{ invoices.items }}
+      {%- for invoice in invoices.items  %}
+
+      {{ invoice }}
+
+      {%- endfor %}
 
       {{render_pagination(invoices)}}
 {%- endblock %}
