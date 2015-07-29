@@ -1,0 +1,35 @@
+{# This simple template derives from ``base.html``. See ``base.html`` for
+   more information about template inheritance. #}
+{%- extends "base.html" %}
+
+{% block content %}
+   <div class="container">
+        <div class="jumbotron">
+            <h1>{% trans %}Purchase Credits{% endtrans%}</h1>
+            <p>
+                {{util.flashed_messages(dismissible=False)}}
+            </p>
+            <p>
+                {% trans %}Your new invoice.{% endtrans%}
+            </p>
+            <p>
+                Currently you have <b>{{ g.neuro }}</b> Credits.
+            </p>
+        </div>
+        <div class="row">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                </div>
+                <div class="panel-body">
+                    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+                        [obrazek]
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+                        Credits: {{payme.credits}}<br/>
+                        BTC: {{payme.btc}}<br/>
+                        Address: {{payme.address}}<br/>
+                    </div>
+                </div>
+            </div>
+        </div>
+{%- endblock %}

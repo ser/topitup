@@ -123,8 +123,14 @@ def new():
         db.session.add(to_db)
         db.session.commit()
 
+        payme = {
+            'credits': amount,
+            'btc': pypayd_response['result']['amount'],
+            'address': pypayd_response['result']['receiving_address'],
+        }
+
         # and finally show an invoice to the customer
-        #return render_template('invoice-payme.html')
+        return render_template('invoice-payme.html', payme=payme)
 
     return render_template('invoice-new.html', form=form)
 
