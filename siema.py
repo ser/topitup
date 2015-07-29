@@ -54,6 +54,14 @@ class LoginForm(Form):
     confirm_me = BooleanField('Please confirm you agree to TOC', validators=[DataRequired()])
     submit = SubmitField("Buy Credits")
 
+@siema.before_request
+def before_request():
+    try:
+        g.user = current_user.username.decode('utf-8')
+        g.email = current_user.email.decode('utf-8')
+        g.user_id = current_user.id
+    except: pass
+
 @siema.route('/invoice/new', methods=('GET', 'POST'))
 @login_required
 def new():
@@ -76,4 +84,8 @@ def new():
 @siema.route('/invoice', methods=('GET', 'POST'))
 @login_required
 def index():
-    return render_template('invoices.html')
+    # downloading all records related to user
+    sql_query = Payd.query.filter_by(id=g.user_id).paginate(1)
+    print(sql_query)
+
+    return render_template('invoices.html', query_results=sql_query)
