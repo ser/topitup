@@ -1,0 +1,21 @@
+{# This simple template derives from ``base.html``. See ``base.html`` for
+   more information about template inheritance. #}
+{%- extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+   <div class="container">
+      <div class="jumbotron">
+        <h1>{% trans %}Purchase Credits{% endtrans%}</h1>
+        <p>
+            {{util.flashed_messages(dismissible=False)}}
+        </p>
+        <p>
+            {% trans %}Here you can purchase credits which will top your phpbb account.{% endtrans%}
+        </p>
+        <p>
+            Currently you have <b>{{ g.neuro }}</b> Credits.
+        </p>
+      </div>
+      {{ wtf.quick_form(form) }}
+{%- endblock %}

@@ -45,6 +45,7 @@ try:
 except:
     pass
 
+# Blueprint 
 siema = Blueprint('siema', __name__)
 
 # Buy credits Form
@@ -53,7 +54,7 @@ class LoginForm(Form):
     confirm_me = BooleanField('Please confirm you agree to TOC', validators=[DataRequired()])
     submit = SubmitField("Buy Credits")
 
-@siema.route('/siema', methods=('GET', 'POST'))
+@siema.route('/invoice/new', methods=('GET', 'POST'))
 @login_required
 def index():
     form = LoginForm()
@@ -70,4 +71,4 @@ def index():
     # amount of Credits in user's account
     g.neuro = current_user.neuro
 
-    return render_template('siema.html', form=form)
+    return render_template('invoice-new.html', form=form)
