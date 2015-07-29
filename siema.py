@@ -19,12 +19,25 @@ class Payd(db.Model):
     __bind_key__ = "topitup"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer)
-    time_creation = db.Column(db.Integer)
-    time_payment = db.Column(db.Integer)
+    time_creation = db.Column(db.DateTime)
+    time_payment = db.Column(db.DayTime)
     order_id =  db.Column(db.String(28), unique=True)
     native_price =  db.Column(db.Integer)
     native_currency =  db.Column(db.String(3))
     btc_price = db.Column(db.Integer)
+
+    def __init__(self, id, user_id, time_creation, time_payment, order_id, native_price, native_currency, btc_price):
+        self.id = id
+        self.user_id = user_id
+        self.time_creation = time_creation
+        self.time_payment = time_payment
+        self.order_id = order_id
+        self.native_price = native_price
+        self.native_currency = native_currency
+        self.btc_price = btc_price
+
+    def __repr__(self):
+        return '<Payd %r>' % self.id
 
 siema = Blueprint('siema', __name__)
 
