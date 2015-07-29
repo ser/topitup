@@ -13,11 +13,33 @@
         </p>
       </div>
 
+      <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>User ID</th>
+            <th>Invoice ID</th>
+            <th>Date of request</th>
+            <th>Date of payment</th>
+            <th>Bitcoin address</th>
+            <th>Amount in Credits</th>
+            <th>Amount in BTC</th>
+        </tr>
+
       {%- for invoice in invoices.items  %}
 
-      {{ invoice }}
+      <tr>
+          <td>{{ invoice.id }}</td>
+          <td>{{ invoice.user_id }}</td>
+          <td>{{ invoice.order_id }}</td>
+          <td>{{ invoice.time_creation }}</td>
+          <td>{{ invoice.time_payment }}</td>
+          <td>{{ invoice.address }}</td>
+          <td>{{ invoice.native_price }}</td>
+          <td>{{ invoice.btc_price }}</td>
+      </tr>
 
       {%- endfor %}
+      </table>
 
       {{render_pagination(invoices)}}
 {%- endblock %}

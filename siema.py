@@ -29,12 +29,13 @@ class Payd(db.Model):
     user_id = db.Column(db.Integer)
     time_creation = db.Column(db.DateTime)
     time_payment = db.Column(db.DateTime)
-    order_id =  db.Column(db.String(28), unique=True)
+    order_id =  db.Column(db.String(35), unique=True)
     native_price =  db.Column(db.Integer)
     native_currency =  db.Column(db.String(3))
     btc_price = db.Column(db.Integer)
+    address = db.Column(db.String(35))
 
-    def __init__(self, id, user_id, time_creation, time_payment, order_id, native_price, native_currency, btc_price):
+    def __init__(self, id, user_id, time_creation, time_payment, order_id, native_price, native_currency, btc_price, address):
         self.id = id
         self.user_id = user_id
         self.time_creation = time_creation
@@ -43,6 +44,7 @@ class Payd(db.Model):
         self.native_price = native_price
         self.native_currency = native_currency
         self.btc_price = btc_price
+        self.address = address
 
     def __repr__(self):
         return '<Payd %r>' % self.id
@@ -116,6 +118,7 @@ def new():
             amount,
             "EUR",
             pypayd_response['result']['amount'],
+            pypayd_response['result']['receiving_address'],
         )
         db.session.add(to_db)
         db.session.commit()
