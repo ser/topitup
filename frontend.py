@@ -11,6 +11,11 @@ from flask_nav.elements import Navbar, View, Subgroup, Link, Text, Separator
 from flask_login import current_user, login_required
 from functools import wraps
 
+# Define Bootswatch CDN
+#from flask_bootstrap import WebCDN
+#BOOTSTRAP_VERSION = re.sub(r'^(\d+\.\d+\.\d+).*', r'\1', __version__)
+#app.extensions['bootstrap']['cdns']['bootswatch'] = WebCDN(
+
 # Let's start!
 
 from nav import nav

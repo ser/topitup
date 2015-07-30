@@ -12,7 +12,7 @@
 
 {# We also set a default title, usually because we might forget to set one.
    In our sample app, we will most likely just opt not to change it #}
-{% block title %}Sample App for Flask-Bootstrap{% endblock %}
+{% block title %}TopItUP = buy Credits with Bitcoins{% endblock %}
 
 {# While we are at it, we also enable fixes for legacy browsers. First we
    import the necessary macros: #}
@@ -36,8 +36,10 @@
 {% block styles -%}
     {{super()}}  {# do not forget to call super or Bootstrap's own stylesheets
                     will disappear! #}
-    <link rel="stylesheet" type="text/css"
-          href="{{url_for('static', filename='sample-app.css')}}">
+        <link rel="stylesheet" type="text/css"
+        href="{{url_for('static', filename='sample-app.css')}}">
+        <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.5/journal/bootstrap.min.css">
 {% endblock %}
 
 {# Finally, round things out with navigation #}
