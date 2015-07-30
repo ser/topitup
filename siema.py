@@ -20,7 +20,9 @@ from datetime import datetime
 from topitup import db
 from topitup import app
 from login_bp import User
-
+from frontend import top_nav
+from frontend import login_required
+from nav import nav
 
 # Let's start!
 
@@ -72,8 +74,11 @@ def before_request():
         g.email = current_user.email.decode('utf-8')
         g.user_id = current_user.id
         # amount of Credits in user's account
-        g.neuro = current_user.neuro
-    except: pass
+        g.credits = current_user.neuro
+        nav.register_element('top_nav', top_nav(g.user, g.credits))
+    except:
+        g.user = None
+        nav.register_element('top_nav', top_nav('Log in', 'Add credits'))
 
 @siema.route('/invoices/new', methods=('GET', 'POST'))
 @login_required
@@ -136,7 +141,6 @@ def new():
 
     return render_template('invoice-new.html', form=form)
 
-#@siema.route('/invoices/', methods=('GET', 'POST'))
 @siema.route('/invoices/', defaults={'page': 1})
 @siema.route('/invoices/page/<int:page>')
 @login_required

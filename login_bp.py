@@ -22,6 +22,8 @@ from wtforms import StringField, SubmitField, PasswordField, BooleanField
 from wtforms.validators import DataRequired
 
 # Let's start!
+from nav import nav
+from frontend import top_nav
 
 login_bp = Blueprint('login_bp', __name__)
 
@@ -68,8 +70,17 @@ class LoginForm(Form):
     recaptcha = RecaptchaField('Spam protection')
     submit = SubmitField("Log me in")
 
+@login_bp.before_request
+def before_request():
+    try:
+        g.user = current_user.username.decode('utf-8')
+        g.email = current_user.email.decode('utf-8')
+    except:
+        nav.register_element('top_nav', top_nav('Log in'))
+
 @login_bp.route('/login', methods=('GET', 'POST'))
 def index():
+    nav.register_element('top_nav', top_nav('Log in'))
     form = LoginForm()
     if form.validate_on_submit():
 

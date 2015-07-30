@@ -12,12 +12,10 @@
         <p>
             {{util.flashed_messages(dismissible=True)}}
         </p>
-        {% if not current_user.is_authenticated() %}
+        {% if current_user.is_authenticated() %}
         <p>
-          <a class="btn btn-lg btn-default" role="button"
-             href="/login" >{% trans %}Login{% endtrans%}</a>
+            Currently you have <kbd>{{ g.credits }}</kbd> Credits.
         </p>
-         {% else %}
         {% endif %}
       </div>
 {%- endblock %}

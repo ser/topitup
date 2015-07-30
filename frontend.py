@@ -8,7 +8,8 @@
 # Flask modules
 from flask import Blueprint, render_template, abort, redirect, url_for, session, request, flash, current_app, g
 from flask_nav.elements import Navbar, View, Subgroup, Link, Text, Separator
-from flask_login import current_user
+from flask_login import current_user, login_required
+from functools import wraps
 
 # Let's start!
 
@@ -42,29 +43,51 @@ frontend = Blueprint('frontend', __name__)
 #    )
 #))
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if g.user is None:
+            return redirect(url_for('login_bp.index', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# NAVBAR
+class UserGreeting(Text):
+    def __init__(self):
+        pass
+
+    @property
+    def text(self):
+        return 'Hello, {}'.format('bob')
+
+# navbar itself
+def top_nav(username, balance):
+    return Navbar(
+        View('TopItUp', 'frontend.index'),
+        Subgroup(
+            username,
+            View('Logout', 'login_bp.logout')
+        ),
+        Subgroup(
+            balance,
+            View('Add more credits', 'siema.new'),
+            View('Your invoices history', 'siema.index'),
+        )
+    )
+
 @frontend.before_request
 def before_request():
     try:
         g.user = current_user.username.decode('utf-8')
         g.email = current_user.email.decode('utf-8')
-    except: pass
-
-# NAVBAR
-#@nav.navigation
-def top_nav():
-    return Navbar(
-        View('TopItUp', '.index'),
-        View('Home', '.index'),
-        View('Invoices', 'siema.index'),
-        View('New invoice', 'siema.new'),
-        Subgroup(
-            'Ala',
-        )
-    )
-nav.register_element('top_nav', top_nav)
+        # amount of Credits in user's account
+        g.credits = current_user.neuro
+        nav.register_element('top_nav', top_nav(g.user, g.credits))
+    except:
+        nav.register_element('top_nav', top_nav('Log in', 'Add credits'))
 
 # Front page
 @frontend.route('/')
+@login_required
 def index():
-#    nav.register_element('frontend_top', topbar) 
     return render_template('index.html')
