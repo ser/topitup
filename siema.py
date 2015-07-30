@@ -15,6 +15,7 @@ import requests, json
 
 # Other modules
 from datetime import datetime
+from datetime import timedelta
 
 # Our own modules
 from topitup import db
@@ -136,8 +137,13 @@ def new():
             'image': pypayd_response['result']['qr_image'],
         }
 
+        # generate approximate time to pay the invoice 
+        pay_time = datetime.now() + timedelta(minutes=45)
+
         # and finally show an invoice to the customer
-        return render_template('invoice-payme.html', payme=payme)
+        return render_template('invoice-payme.html',
+                               payme=payme,
+                               pay_time=pay_time)
 
     return render_template('invoice-new.html', form=form)
 
