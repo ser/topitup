@@ -56,15 +56,6 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# NAVBAR
-class UserGreeting(Text):
-    def __init__(self):
-        pass
-
-    @property
-    def text(self):
-        return 'Hello, {}'.format('bob')
-
 # navbar itself
 def top_nav(username, balance):
     return Navbar(
