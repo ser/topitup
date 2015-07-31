@@ -152,7 +152,7 @@ def new():
 def index(page):
     # downloading all records related to user
     #sql_query = Payd.query.filter_by(id=g.user_id).paginate(1)
-    sql_query = Payd.query.paginate(page)
+    sql_query = Payd.query.paginate(page, app.config['INVOICES_PER_PAGE'])
 
     return render_template('invoices.html', 
                            invoices=sql_query,
