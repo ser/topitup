@@ -84,6 +84,7 @@ def before_request():
         g.email = current_user.email.decode('utf-8')
         # amount of Credits in user's account
         g.credits = current_user.neuro
+        g.user_id = current_user.id
     except:
         g.user = None
         g.credits = None

@@ -75,6 +75,7 @@ def before_request():
         g.email = current_user.email.decode('utf-8')
         # amount of Credits in user's account
         g.credits = current_user.neuro
+        g.user_id = current_user.id
     except:
         g.user = None
         g.credits = None
@@ -146,14 +147,30 @@ def new():
 
     return render_template('invoice-new.html', form=form)
 
+# user has access to his own invoices only
 @siema.route('/invoices/', defaults={'page': 1})
 @siema.route('/invoices/page/<int:page>')
 @login_required
 def index(page):
     # downloading all records related to user
-    #sql_query = Payd.query.filter_by(id=g.user_id).paginate(1)
-    sql_query = Payd.query.paginate(page, app.config['INVOICES_PER_PAGE'])
+    sql_query = Payd.query.filter_by(user_id=g.user_id).paginate(page, app.config['INVOICES_PER_PAGE'])
 
     return render_template('invoices.html', 
                            invoices=sql_query,
                            )
+
+# admin has access to all invoices
+@siema.route('/admin/', defaults={'page': 1})
+@siema.route('/admin/page/<int:page>')
+@login_required
+def admin(page):
+    # only user with id = 666 can enter this route
+    if g.user_id == 666:
+        sql_query = Payd.query.paginate(page, 50)
+        return render_template('invoices.html', 
+                           invoices=sql_query,
+                           )
+    else:
+        flash('You are not admin and you can see your own invoices only!',
+              'warning')
+        return redirect(url_for('siema.index'))
