@@ -73,13 +73,12 @@ def before_request():
     try:
         g.user = current_user.username.decode('utf-8')
         g.email = current_user.email.decode('utf-8')
-        g.user_id = current_user.id
         # amount of Credits in user's account
         g.credits = current_user.neuro
-        nav.register_element('top_nav', top_nav(g.user, g.credits))
     except:
         g.user = None
-        nav.register_element('top_nav', top_nav('Log in', 'Add credits'))
+        g.credits = None
+    nav.register_element('top_nav', top_nav(g.user, g.credits))
 
 @siema.route('/invoices/new', methods=('GET', 'POST'))
 @login_required

@@ -16,6 +16,11 @@
         <p>
             Currently you have <kbd>{{ g.credits }}</kbd> Credits.
         </p>
+        <p>
+            <a class="btn btn-lg btn-primary" role="button"
+                href="{{ url_for('siema.new') }}">
+                Top up your balance</a>
+        </p>
         {% endif %}
-      </div>
+    </div>
 {%- endblock %}

@@ -58,18 +58,24 @@ def login_required(f):
 
 # navbar itself
 def top_nav(username, balance):
-    return Navbar(
-        View('TopItUp', 'frontend.index'),
-        Subgroup(
-            username,
-            View('Logout', 'login_bp.logout')
-        ),
-        Subgroup(
-            balance,
-            View('Add more credits', 'siema.new'),
-            View('Your invoices history', 'siema.index'),
+    if username == None:
+        return Navbar(
+            View('TopItUp', 'frontend.index'),
+            View('Log in', 'login_bp.index'),
         )
-    )
+    else:
+        return Navbar(
+            View('TopItUp', 'frontend.index'),
+            Subgroup(
+                username,
+                View('Logout', 'login_bp.logout')
+            ),
+            Subgroup(
+                "Your balance: "+str(balance),
+                View('Add more credits', 'siema.new'),
+                View('Your invoices history', 'siema.index'),
+            ),
+        )
 
 @frontend.before_request
 def before_request():
@@ -78,9 +84,10 @@ def before_request():
         g.email = current_user.email.decode('utf-8')
         # amount of Credits in user's account
         g.credits = current_user.neuro
-        nav.register_element('top_nav', top_nav(g.user, g.credits))
     except:
-        nav.register_element('top_nav', top_nav('Log in', 'Add credits'))
+        g.user = None
+        g.credits = None
+    nav.register_element('top_nav', top_nav(g.user, g.credits))
 
 # Front page
 @frontend.route('/')

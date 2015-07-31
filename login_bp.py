@@ -75,12 +75,15 @@ def before_request():
     try:
         g.user = current_user.username.decode('utf-8')
         g.email = current_user.email.decode('utf-8')
+        # amount of Credits in user's account
+        g.credits = current_user.neuro
     except:
-        nav.register_element('top_nav', top_nav('Log in'))
+        g.user = None
+        g.credits = None
+    nav.register_element('top_nav', top_nav(g.user, g.credits))
 
 @login_bp.route('/login', methods=('GET', 'POST'))
 def index():
-    nav.register_element('top_nav', top_nav('Log in'))
     form = LoginForm()
     if form.validate_on_submit():
 
