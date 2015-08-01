@@ -23,6 +23,8 @@ from flask_login import LoginManager
 # Flask KVSession
 from flask_kvsession import KVSessionExtension
 from simplekv.fs import FilesystemStore
+# Flask Mail
+from flask_mail import Mail
 
 app = Flask('topitup')
 
@@ -39,6 +41,8 @@ Debug(app)
 # Wdb(app)
 # for developement, always pass captcha
 app.testing = True
+# if app.debug = True, show a toolbar, please
+DebugToolbarExtension(app)
 # ####################################################################
 
 # Install Flask-Appconfig extension
@@ -69,13 +73,13 @@ KVSessionExtension(store, app)
 # Install Babel extension and set the locale from the browser
 babel = Babel(app)
 
+# Flask Mail extension
+Mail(app)
+
 
 @babel.localeselector
 def get_locale():
     return request.accept_languages.best_match(['en', 'pl'])
-
-# if app.debug = True, show a toolbar, please
-DebugToolbarExtension(app)
 
 # Build pages from skeleton
 from frontend import frontend

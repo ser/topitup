@@ -1,3 +1,8 @@
+# inside blueprints. This is the front-facing blueprint.
+#
+# You can find out more about blueprints at
+# http://flask.pocoo.org/docs/blueprints/
+
 # Flask modules
 from flask import (
     Blueprint,
