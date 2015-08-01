@@ -1,7 +1,26 @@
 from flask_nav import Nav
+from flask_nav.elements import Navbar, View, Subgroup
 
-# To keep things clean, we keep our Flask-Nav instance in here. We will define
-# frontend-specific navbars in the respective frontend, but it is also possible
-# to put share navigational items in here.
+
+# navbar itself
+def top_nav(username, balance):
+    if username is None:
+        return Navbar(
+            View('TopItUp', 'frontend.index'),
+            View('Log in', 'login_bp.index'),
+        )
+    else:
+        return Navbar(
+            View('TopItUp', 'frontend.index'),
+            Subgroup(
+                username,
+                View('Logout', 'login_bp.logout')
+            ),
+            Subgroup(
+                "Your balance: "+str(balance),
+                View('Add more credits', 'siema.new'),
+                View('Your invoices history', 'siema.index'),
+            ),
+        )
 
 nav = Nav()

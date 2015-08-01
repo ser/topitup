@@ -6,15 +6,27 @@
 # http://flask.pocoo.org/docs/blueprints/
 
 # Flask modules
-from flask import Blueprint, render_template, abort, redirect, url_for, session, request, flash, current_app, g
-from flask_nav.elements import Navbar, View, Subgroup, Link, Text, Separator
+from flask import (
+    Blueprint,
+    render_template,
+    redirect,
+    url_for,
+    request,
+    flash,
+    g
+)
+# from flask_nav.elements import Navbar, View, Subgroup, Link, Text, Separator
 
 # Import password / encryption helper tools
 # AVOID flask-bcrypt extension, it does not work with python 3.x
 import bcrypt
 
 # FLask Login
-from flask_login import login_user, logout_user, current_user, login_required
+from flask_login import (
+    login_user,
+    logout_user,
+    current_user
+)
 
 # WTForms
 from flask_wtf import Form, RecaptchaField
@@ -22,22 +34,27 @@ from wtforms import StringField, SubmitField, PasswordField, BooleanField
 from wtforms.validators import DataRequired
 
 # Let's start!
-from nav import nav
-from frontend import top_nav
+from nav import (
+    nav,
+    top_nav
+)
 
 login_bp = Blueprint('login_bp', __name__)
 
 from topitup import db
+
+
 # Structure of User data located in phpBB
 class User(db.Model):
     __tablename__ = "phpbb_users"
     id = db.Column('user_id', db.Integer, primary_key=True)
-    username = db.Column('username_alias', db.String(63), unique=True, index=True)
-    password = db.Column('user_password' , db.String(255))
+    username = db.Column('username_alias', db.String(63),
+                         unique=True, index=True)
+    password = db.Column('user_password', db.String(255))
     email = db.Column('user_email', db.String(100), unique=True, index=True)
     posts = db.Column('user_posts', db.Integer)
     avatar = db.Column('user_avatar', db.String(255))
-    neuro = db.Column('neuro', db.Numeric(12,2))
+    neuro = db.Column('neuro', db.Numeric(12, 2))
 
     def __init__(self, username, password, email, posts, avatar, neuro):
         self.username = username
@@ -62,6 +79,7 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % (self.username)
 
+
 # Login Form
 class LoginForm(Form):
     username = StringField('Username', validators=[DataRequired()])
@@ -69,6 +87,7 @@ class LoginForm(Form):
     remember_me = BooleanField('Remember me')
     recaptcha = RecaptchaField('Spam protection')
     submit = SubmitField("Log me in")
+
 
 @login_bp.before_request
 def before_request():
@@ -83,6 +102,7 @@ def before_request():
         g.credits = None
     nav.register_element('top_nav', top_nav(g.user, g.credits))
 
+
 @login_bp.route('/login', methods=('GET', 'POST'))
 def index():
     form = LoginForm()
@@ -90,7 +110,7 @@ def index():
 
         username = request.form['username']
         password = request.form['password']
-        password = password.encode('utf-8') # required by bcrypt
+        password = password.encode('utf-8')  # required by bcrypt
 
         remember_me = False
         if 'remember_me' in request.form:
@@ -100,11 +120,11 @@ def index():
             sql_user_query = User.query.filter_by(username=username).first()
 
             pwhash = sql_user_query.password.decode('utf-8')
-            pwhash = pwhash.encode('utf-8') # required by bcrypt
+            pwhash = pwhash.encode('utf-8')  # required by bcrypt
             userid = sql_user_query.id
 
             if userid and bcrypt.hashpw(password, pwhash) == pwhash:
-                login_user(sql_user_query, remember = remember_me)
+                login_user(sql_user_query, remember=remember_me)
                 flash('Logged in successfully', 'info')
                 return redirect('/')
         except:
@@ -112,6 +132,7 @@ def index():
             return redirect('/login')
 
     return render_template('login.html', form=form)
+
 
 @login_bp.route('/logout')
 def logout():

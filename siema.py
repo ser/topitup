@@ -1,17 +1,28 @@
 # Flask modules
-from flask import Blueprint, render_template, abort, redirect, url_for, session, request, flash, current_app, g
-from flask_nav.elements import Navbar, View, Subgroup, Link, Text, Separator
+from flask import (
+    Blueprint,
+    render_template,
+    redirect,
+    url_for,
+    request,
+    flash,
+    current_app,
+    g
+)
 
 # FLask Login
-from flask_login import login_user, logout_user, current_user, login_required
+from flask_login import (
+    current_user,
+)
 
 # WTForms
-from flask_wtf import Form, RecaptchaField
+from flask_wtf import Form
 from wtforms import SubmitField, BooleanField, DecimalField
 from wtforms.validators import DataRequired
 
 # Modules required for communication with pypayd
-import requests, json
+import requests
+import json
 
 # Other modules
 from datetime import datetime
@@ -19,13 +30,15 @@ from datetime import timedelta
 
 # Our own modules
 from topitup import db
-from topitup import app
-from login_bp import User
-from frontend import top_nav
 from frontend import login_required
-from nav import nav
+# from login_bp import User
+from nav import (
+    nav,
+    top_nav
+)
 
 # Let's start!
+
 
 class Payd(db.Model):
     __bind_key__ = "topitup"
@@ -33,13 +46,14 @@ class Payd(db.Model):
     user_id = db.Column(db.Integer)
     time_creation = db.Column(db.DateTime)
     time_payment = db.Column(db.DateTime)
-    order_id =  db.Column(db.String(35), unique=True)
-    native_price =  db.Column(db.Integer)
-    native_currency =  db.Column(db.String(3))
+    order_id = db.Column(db.String(35), unique=True)
+    native_price = db.Column(db.Integer)
+    native_currency = db.Column(db.String(3))
     btc_price = db.Column(db.Integer)
     address = db.Column(db.String(35))
 
-    def __init__(self, id, user_id, time_creation, time_payment, order_id, native_price, native_currency, btc_price, address):
+    def __init__(self, id, user_id, time_creation, time_payment, order_id,
+                 native_price, native_currency, btc_price, address):
         self.id = id
         self.user_id = user_id
         self.time_creation = time_creation
@@ -59,14 +73,17 @@ try:
 except:
     pass
 
-# Blueprint 
+# Blueprint
 siema = Blueprint('siema', __name__)
+
 
 # Buy credits Form
 class LoginForm(Form):
     amount = DecimalField('Amount of Credits', validators=[DataRequired()])
-    confirm_me = BooleanField('Please confirm you agree to TOC', validators=[DataRequired()])
+    confirm_me = BooleanField('Please confirm you agree to TOC',
+                              validators=[DataRequired()])
     submit = SubmitField("Buy Credits")
+
 
 @siema.before_request
 def before_request():
@@ -81,6 +98,7 @@ def before_request():
         g.credits = None
     nav.register_element('top_nav', top_nav(g.user, g.credits))
 
+
 @siema.route('/invoices/new', methods=('GET', 'POST'))
 @login_required
 def new():
@@ -93,10 +111,10 @@ def new():
         if 'confirm_me' in request.form:
             confirm_me = True
 
-        if confirm_me == False:
+        if confirm_me is False:
             pass
 
-        # get a new transaction id 
+        # get a new transaction id
         sql_query = Payd.query.all()
         new_local_transaction_id = len(sql_query)
         # TODO: deal with an unlikely event of concurrency
@@ -109,7 +127,8 @@ def new():
             "jsonrpc": "2.0",
             "id": new_local_transaction_id,
         }
-        pypayd_response = requests.post(app.config['PYPAYD_URI'],
+        pypayd_response = requests.post(
+            current_app.config['PYPAYD_URI'],
             data=json.dumps(pypayd_payload),
             headers=pypayd_headers).json()
 
@@ -120,7 +139,7 @@ def new():
             None,
             g.user_id,
             datetime.utcnow(),
-            datetime.fromtimestamp(0), # this is not a paid invoice, yet
+            datetime.fromtimestamp(0),  # this is not a paid invoice, yet
             pypayd_response['result']['order_id'],
             amount,
             "EUR",
@@ -137,7 +156,7 @@ def new():
             'image': pypayd_response['result']['qr_image'],
         }
 
-        # generate approximate time to pay the invoice 
+        # generate approximate time to pay the invoice
         pay_time = datetime.now() + timedelta(minutes=45)
 
         # and finally show an invoice to the customer
@@ -147,17 +166,21 @@ def new():
 
     return render_template('invoice-new.html', form=form)
 
+
 # user has access to his own invoices only
 @siema.route('/invoices/', defaults={'page': 1})
 @siema.route('/invoices/page/<int:page>')
 @login_required
 def index(page):
     # downloading all records related to user
-    sql_query = Payd.query.filter_by(user_id=g.user_id).paginate(page, app.config['INVOICES_PER_PAGE'])
+    sql_query = Payd.query.filter_by(
+        user_id=g.user_id).paginate(page,
+                                    current_app.config['INVOICES_PER_PAGE'])
 
-    return render_template('invoices.html', 
+    return render_template('invoices.html',
                            invoices=sql_query,
                            )
+
 
 # admin has access to all invoices
 @siema.route('/admin/', defaults={'page': 1})
@@ -167,9 +190,9 @@ def admin(page):
     # only user with id = 666 can enter this route
     if g.user_id == 666:
         sql_query = Payd.query.paginate(page, 50)
-        return render_template('invoices.html', 
-                           invoices=sql_query,
-                           )
+        return render_template('invoices.html',
+                               invoices=sql_query,
+                               )
     else:
         flash('You are not admin and you can see your own invoices only!',
               'warning')

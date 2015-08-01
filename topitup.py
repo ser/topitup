@@ -5,14 +5,14 @@ import time
 # Server engine
 import cherrypy
 # Framework
-from flask import Flask
+from flask import Flask, request
 # Tune our log file
 from paste.translogger import TransLogger
 # Twitter Bootstrap
 from flask_bootstrap import Bootstrap
 # Flask Appconfig
 from flask_appconfig import AppConfig
-# i18n support 
+# i18n support
 from flask_babel import Babel
 # Debug Toolbar
 from flask_debugtoolbar import DebugToolbarExtension
@@ -26,12 +26,20 @@ from simplekv.fs import FilesystemStore
 
 app = Flask('topitup')
 
+# ####################################################################
 # Comment all of this for production!!!!!!!!!!!!!!!!!!!!!!
-from flask_debug import Debug
+# we can chose between wdb & debug
 app.debug = True
+# ######## Debugging has two options
+# #### 1. flask-debug
+from flask_debug import Debug
 Debug(app)
+# #### 2. wdb-debug
+# from flask_wdb import Wdb
+# Wdb(app)
 # for developement, always pass captcha
 app.testing = True
+# ####################################################################
 
 # Install Flask-Appconfig extension
 AppConfig(app)
@@ -45,6 +53,8 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 from login_bp import User
+
+
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -58,7 +68,8 @@ KVSessionExtension(store, app)
 
 # Install Babel extension and set the locale from the browser
 babel = Babel(app)
-from flask import request
+
+
 @babel.localeselector
 def get_locale():
     return request.accept_languages.best_match(['en', 'pl'])
@@ -79,6 +90,7 @@ app.register_blueprint(siema)
 
 # Initializing the navigation
 nav.init_app(app)
+
 
 class FotsTransLogger(TransLogger):
     # Borrowed from:
