@@ -7,7 +7,7 @@ from flask import (
     request,
     flash,
     current_app,
-    g
+    g,
 )
 
 # FLask Login
@@ -17,7 +17,11 @@ from flask_login import (
 
 # WTForms
 from flask_wtf import Form
-from wtforms import SubmitField, BooleanField, DecimalField
+from wtforms import (
+    SubmitField,
+    BooleanField,
+    DecimalField,
+)
 from wtforms.validators import DataRequired
 
 # Modules required for communication with pypayd
@@ -31,7 +35,6 @@ from datetime import timedelta
 # Our own modules
 from topitup import db
 from frontend import login_required
-# from login_bp import User
 from nav import (
     nav,
     top_nav

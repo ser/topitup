@@ -1,10 +1,3 @@
-# This contains our frontend; since it is a bit messy to use the @app.route
-# decorator style when using application factories, all of our routes are
-# inside blueprints. This is the front-facing blueprint.
-#
-# You can find out more about blueprints at
-# http://flask.pocoo.org/docs/blueprints/
-
 # Flask modules
 from flask import (
     Blueprint,
@@ -15,12 +8,6 @@ from flask import (
     flash,
     g
 )
-# from flask_nav.elements import Navbar, View, Subgroup, Link, Text, Separator
-
-# Import password / encryption helper tools
-# AVOID flask-bcrypt extension, it does not work with python 3.x
-import bcrypt
-
 # FLask Login
 from flask_login import (
     login_user,
@@ -33,15 +20,20 @@ from flask_wtf import Form, RecaptchaField
 from wtforms import StringField, SubmitField, PasswordField, BooleanField
 from wtforms.validators import DataRequired
 
-# Let's start!
+# Import password / encryption helper tools
+# AVOID flask-bcrypt extension, it does not work with python 3.x
+import bcrypt
+
+
+# our own modules
+from topitup import db
 from nav import (
     nav,
     top_nav
 )
 
+# Let's start!
 login_bp = Blueprint('login_bp', __name__)
-
-from topitup import db
 
 
 # Structure of User data located in phpBB
