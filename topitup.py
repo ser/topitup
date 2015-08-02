@@ -28,6 +28,9 @@ from flask_mail import Mail
 
 app = Flask('topitup')
 
+# Install Flask-Appconfig extension and configure everything
+AppConfig(app)
+
 # ####################################################################
 # Comment all of this for production!!!!!!!!!!!!!!!!!!!!!!
 # we can chose between wdb & debug
@@ -45,8 +48,6 @@ app.testing = True
 DebugToolbarExtension(app)
 # ####################################################################
 
-# Install Flask-Appconfig extension
-AppConfig(app)
 
 # Install and connect SQLAlchemy
 db = SQLAlchemy(app)
