@@ -25,8 +25,6 @@ from flask_kvsession import KVSessionExtension
 from simplekv.fs import FilesystemStore
 # Flask Mail
 from flask_mail import Mail
-# Flask APScheduler
-from flask_apscheduler import APScheduler
 
 app = Flask('topitup')
 
@@ -78,15 +76,6 @@ babel = Babel(app)
 
 # Flask Mail extension
 Mail(app)
-
-# Flask Scheduler
-# Check payments every minute
-def pypaydcheck():
-    print("CRON.")
-# Flask Scheduler
-scheduler = APScheduler()
-scheduler.init_app(app)
-scheduler.start()
 
 
 @babel.localeselector

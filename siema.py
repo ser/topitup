@@ -24,6 +24,9 @@ from wtforms import (
 )
 from wtforms.validators import DataRequired
 
+# Mail
+from flask_mail import Message
+
 # Modules required for communication with pypayd
 import requests
 import json
@@ -54,9 +57,10 @@ class Payd(db.Model):
     native_currency = db.Column(db.String(3))
     btc_price = db.Column(db.Integer)
     address = db.Column(db.String(35))
+    txn = db.Column(db.Integer, default=0)
 
     def __init__(self, id, user_id, time_creation, time_payment, order_id,
-                 native_price, native_currency, btc_price, address):
+                 native_price, native_currency, btc_price, address, txn):
         self.id = id
         self.user_id = user_id
         self.time_creation = time_creation
@@ -66,6 +70,7 @@ class Payd(db.Model):
         self.native_currency = native_currency
         self.btc_price = btc_price
         self.address = address
+        self.txn = txn
 
     def __repr__(self):
         return '<Payd %r>' % self.id
@@ -100,6 +105,75 @@ def before_request():
         g.user = None
         g.credits = None
     nav.register_element('top_nav', top_nav(g.user, g.credits))
+
+
+# run every minute from cron to check for payments
+@siema.route('/invoices/checkitup')
+def checkitup():
+    # we collect all invoices which are not paid
+    sql_query = Payd.query.filter_by(
+        time_payment=datetime.fromtimestamp(0)).all()
+    for invoice in sql_query:
+        print(invoice)
+        howold = current_app.config['WARRANTY_TIME']
+        # ignore all invoices which are older than WARRANTY_TIME days
+        if invoice.time_creation + timedelta(days=howold) > datetime.now():
+
+            print(invoice.order_id)
+            # initiate conversation with pypayd
+            pypayd_headers = {'content-type': 'application/json'}
+            pypayd_payload = {
+                "method": "check_order_status",
+                "params": {"order_id": invoice.order_id},
+                "jsonrpc": "2.0",
+                "id": 0,
+            }
+            #pypayd_response = requests.post(
+            #    current_app.config['PYPAYD_URI'],
+            #    data=json.dumps(pypayd_payload),
+            #    headers=pypayd_headers).json()
+
+            #print(pypayd_response)
+            #invoice.txn = 0
+
+            howmanyconfirmations = current_app.config['CONFIRMATIONS']
+            confirmations = pypayd_response['result']['amount']
+            # Huhu! We have a new payment!
+            if invoice.txn == 0 and confirmations > howmanyconfirmations:
+
+                # Send an email message if payment was registered
+                # From: DEFAULT_MAIL_SENDER
+                msg = Message()
+                msg.add_recipient(current_user.email)
+                msg.subject = "Payment confirmation"
+                msg.body = ""
+
+                # Register payment
+                invoice.time_payment = datetime.now()
+
+                # Register paid amount in the main database
+                balance = current_user.credits
+                current_user.credits = balance + pypayd_response['result']['amount']
+
+            # Housekeeping
+            invoice.txn = confirmations
+
+    # register all transactions in databases
+    db.session.commit()
+
+    flash('Thank you.', 'info')
+    return redirect(url_for('frontend.index'))
+
+
+
+@siema.route('/invoices/id/<orderid>')
+@login_required
+def showinvoice(orderid):
+    sql_query = Payd.query.filter_by(
+        order_id=orderid).first()
+    return render_template('invoice-id.html',
+                           invoice=sql_query,
+                           )
 
 
 @siema.route('/invoices/new', methods=('GET', 'POST'))
@@ -148,6 +222,7 @@ def new():
             "EUR",
             pypayd_response['result']['amount'],
             pypayd_response['result']['receiving_address'],
+            0,
         )
         db.session.add(to_db)
         db.session.commit()

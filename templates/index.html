@@ -6,21 +6,28 @@
    This will keep scripts at the page end and a navbar you add on later
    intact. #}
 {% block content %}
-   <div class="container">
+<div class="container">
       <div class="jumbotron">
-        <h1>{% trans %}Welcome to TopItUp{% endtrans%}</h1>
-        <p>
-            {{util.flashed_messages(dismissible=True)}}
-        </p>
-        {% if current_user.is_authenticated() %}
-        <p>
-            Currently you have <kbd>{{ g.credits }}</kbd> Credits.
-        </p>
-        <p>
-            <a class="btn btn-lg btn-primary" role="button"
-                href="{{ url_for('siema.new') }}">
-                Top up your balance</a>
-        </p>
-        {% endif %}
+        <div class="container">
+            <div class="col-md-3">
+                <img src="https://unsplash.it/150/200/?random?blur">
+            </div>
+            <div class="col-md-9">
+                <h1>{% trans %}Welcome to TopItUp{% endtrans%}</h1>
+                <p>
+                    {{util.flashed_messages(dismissible=True)}}
+                </p>
+                {% if current_user.is_authenticated() %}
+                <p>
+                    Currently you have <kbd>{{ g.credits }}</kbd> Credits.
+                </p>
+                <p>
+                    <a class="btn btn-lg btn-primary" role="button"
+                        href="{{ url_for('siema.new') }}">
+                        Top up your balance</a>
+                </p>
+                {% endif %}
+            </div>
+        </div>
     </div>
 {%- endblock %}
